@@ -1,12 +1,12 @@
 ﻿@model WishlistEditModel
 @{
-    ViewBag.Title = Model.DisplayName + "'s Wish List";
+    ViewBag.Title = "Twój wymarzony upominek";
 }
 
-<h1>@ViewBag.Title</h1>
+<h2>@ViewBag.Title</h2>
 
 <div class="text-right">
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#AddItem">Add Item</button>
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#AddItem">Dodaj podpowiedź</button>
 </div>
 
 <div id="AddItem" class="modal fade">
@@ -18,8 +18,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Item</th>
-                <th>Preview</th>
+                <th>Podpowiedzi</th>
+                <!-- <th>Preview</th> -->
                 <th>&nbsp;</th>
             </tr>
         </thead>
@@ -31,21 +31,21 @@
                         <h3>@Html.DisplayFor(m => m.Items[i].Name)</h3>
                         <p><small>@Html.DisplayFor(m => m.Items[i].Description)</small></p>
                     </td>
-                    <td>
+                    <!-- <td>
                         @if (!string.IsNullOrWhiteSpace(Model.Items[i].Url))
                         {
                             <a class="preview" target="_blank" href="@Model.Items[i].Url"><img class="img-thumbnail img-responsive" src="@Url.Action("FeaturedImage", "Preview", new {accountId = Model.AccountId, itemId = Model.Items[i].Id})" /></a>
                         }
                         <p>&nbsp;</p>
-                    </td>
+                    </td> -->
                     <td>
                         <div class="pull-right">
-                            @if (!string.IsNullOrWhiteSpace(Model.Items[i].Url))
+                            <!-- @if (!string.IsNullOrWhiteSpace(Model.Items[i].Url))
                             {
                                 <a target="_blank" class="btn btn-default" href="@Model.Items[i].Url">More Information &raquo;</a>
-                            }
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#EditItem@(i)">Edit</button>
-                            <button class="btn btn-default" data-toggle="modal" data-target="#DeleteItem@(i)">Delete</button>
+                            } -->
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#EditItem@(i)">Zmień</button>
+                            <button class="btn btn-default" data-toggle="modal" data-target="#DeleteItem@(i)">Usuń</button>
                         </div>
                         <div id="EditItem@(i)" class="modal fade">
                             @Html.EditorFor(m => m.Items[i], "EditItem")
@@ -61,5 +61,5 @@
 }
 else
 {
-    <p>Looks like you haven't added any items yet. Click the "Add Item" button to get started!</p>
+    <p>Nie utworzyłeś(aś) jeszcze swojej listy podpowiedzi dla wymarzonego upominku. Kliknij "Dodaj podpowiedź" aby rozpocząć!</p>
 }

@@ -7,26 +7,31 @@
 <div class="jumbotron">
     <div class="row">
         <div class="col-lg-6">
-            <h1>Welcome to Secret Santa, @Model.DisplayName!</h1>
+            <p>Witaj w Secret Santa, @Model.DisplayName!</p>
             @if (!Model.HasPicked() || person == null)
             {
-                <p>Looks like you haven't picked your recipient yet.</p>
+                <p>Jeszcze nikogo nie wybrałeś(aś) do obdarowania.</p>
                 <p>
-                    <a class="btn btn-primary btn-lg" href="@Url.Action("Pick", "Home")">Pick Your Recipient &raquo;</a>
-                    <a class="btn btn-default btn-lg" href="@Url.Action("Index", "Wishlist")">Manage Your Wish List &raquo;</a>
+                    <a class="btn btn-primary btn-lg" href="@Url.Action("Index", "Pick")">Wybierz osobę do obdarowania &raquo;</a>
                 </p>
             }
             else
             {
-                <p>You picked @person.DisplayName!</p>
+                <p>Osoba do obdarowania: <strong class="text-primary">@person.DisplayName!</strong></p>
                 <p>
-                    <a class="btn btn-primary btn-lg" href="@Url.Action("Details", "Wishlist", new {id = person.Id})">View @person.DisplayName's Wish List &raquo;</a>
-                    <a class="btn btn-default btn-lg" href="@Url.Action("Index", "Wishlist")">Manage Your Wish List &raquo;</a>
+                    <a class="btn btn-primary btn-lg" href="@Url.Action("Details", "Wishlist", new {id = person.Id})">Jej/jego wymarzony upominek - zobacz &raquo;</a>
+                </p>
+                <p>
+                    <a class="btn btn-secondary btn-s" href="@Url.Action("Index", "Pick")">Wybierz inną osobę &raquo;</a>
                 </p>
             }
         </div>
         <div class="col-lg-6">
-            <img class="img-responsive" src="@Url.Content("~/images/santa.png")" alt="Santa" />
+            <img class="img-responsive" src="@Url.Content("~/images/santa.png")" alt="Santa" style="max-width: 200px" />
         </div>
     </div>
 </div>
+
+<p>
+    <a class="btn btn-default btn-lg" href="@Url.Action("Index", "Wishlist")">Twój wymarzony upominek - dodaj podpowiedzi &raquo;</a>
+</p>

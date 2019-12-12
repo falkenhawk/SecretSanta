@@ -1,0 +1,49 @@
+@model PickModel
+@{
+    ViewBag.Title = "Wybierz osobę do obdarowania";
+}
+
+<h2>@ViewBag.Title</h2>
+<h5>Na tej liście wyświetlane są osoby, które jeszcze nie zostały wybrane do obdarowania.</h5>
+<br />
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Imię</th>
+            <th>Wymarzony upominek</th>
+            <th>&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Candidates.Count; i++)
+        {
+            <tr>
+                <td>@Html.DisplayFor(m => m.Candidates[i].DisplayName)</td>
+                <td>
+                    @if (Model.Candidates[i].Wishlist.ContainsKey(DateHelper.Year) && Model.Candidates[i].Wishlist[DateHelper.Year].Any())
+                    {
+                        <ol>
+                        @foreach (WishlistItem item in Model.Candidates[i].Wishlist[DateHelper.Year])
+                        {
+                            <li>
+                                @Html.DisplayFor(m => item.Name)
+                                <div><small>@Html.DisplayFor(m => item.Description)</small></div>
+                            </li>
+                        }
+                        </ol>
+                    }
+                    else
+                    {
+                        <p>Ta osoba nie dodała jeszcze podpowiedzi. <br/>
+                            <a href="@Url.Action("Remind", "Wishlist", new {id = Model.Candidates[i].Id})" class="btn btn-primary btn-xs">Wyślij email-przypominajkę do @Html.DisplayFor(m => m.Candidates[i].DisplayName) &raquo;</a>
+                        </p>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Pick", "Pick", new {id = Model.Candidates[i].Id})" class="btn btn-primary btn-large">Wybierz &raquo;</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

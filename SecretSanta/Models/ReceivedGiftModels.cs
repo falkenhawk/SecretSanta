@@ -161,10 +161,9 @@ namespace SecretSanta.Models
                     .AppendFormat("Santa ").AppendLine()
                     .ToString();
 
-                var from = new MailboxAddress("Santa Claus", "santa@thenorthpole.com");
                 var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
 
-                EmailMessage.Send(from, to, "Secret Santa Reminder", body);
+                EmailMessage.Send(to, "Secret Santa Reminder", body);
             }
         }
 

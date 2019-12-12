@@ -19,17 +19,18 @@ namespace SecretSanta.Utilities
             }
 
             Account account = DataRepository.GetAll<Account>().SingleOrDefault(a =>
-                a.Email.Equals(user.Identity.Name, StringComparison.CurrentCultureIgnoreCase)
+                user.Identity.Name.Equals((a.Id ?? Guid.Empty).ToString(), StringComparison.CurrentCultureIgnoreCase)
             );
 
             if (account == null)
             {
-                var model = new AddUserModel
-                {
-                    DisplayName = user.Identity.Name,
-                    Email = user.Identity.Name
-                };
-                account = model.CreateAccount();
+                throw new UnauthorizedAccessException("Access denied.");
+                // var model = new AddUserModel
+                // {
+                //     DisplayName = user.Identity.Name,
+                //     Email = user.Identity.Name
+                // };
+                // account = model.CreateAccount();
             }
 
             return account;

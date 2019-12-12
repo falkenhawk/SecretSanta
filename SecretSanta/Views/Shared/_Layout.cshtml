@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.IsAdmin = User.Identity.IsAuthenticated &&
-                      User.Identity.Name.Equals(AppSettings.AdminEmail, StringComparison.CurrentCultureIgnoreCase);
+                      User.GetAccount().Email.Equals(AppSettings.AdminEmail, StringComparison.CurrentCultureIgnoreCase);
     ViewBag.CurrentUserAccount = User.Identity.IsAuthenticated
         ? User.GetAccount()
         : null;
@@ -30,20 +30,20 @@
             <div class="navbar-collapse collapse">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <ul class="nav navbar-nav nav">
+                    <!-- <ul class="nav navbar-nav nav">
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Gifts <b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a asp-area="" asp-controller="Wishlist" asp-action="Index">My Wish List</a>
+                                <li><a asp-area="" asp-controller="Wishlist" asp-action="Index">Moja lista życzeń</a>
                                 @if (ViewBag.CurrentUserAccount.HasPicked())
                                 {
                                     Account picked = ViewBag.CurrentUserAccount.GetPicked();
-                                    <li><a asp-area="" asp-controller="Wishlist" asp-action="Details" asp-route-id="@picked.Id">@picked.DisplayName's Wish List</a></li>
+                                    <li><a asp-area="" asp-controller="Wishlist" asp-action="Details" asp-route-id="@picked.Id">Lista życzeń: @picked.DisplayName</a></li>
                                 }
                                 <li><a asp-area="" asp-controller="Received" asp-action="Index">Received Gifts</a></li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul> -->
                     <ul class="nav navbar-nav navbar-right">
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-lock"></span> @ViewBag.CurrentUserAccount.DisplayName <b class="caret"></b></a>
@@ -52,7 +52,7 @@
                                 {
                                     <li><a asp-area="" asp-controller="Admin" asp-action="Users">Manage Users</a></li>
                                 }
-                                <li><a asp-area="" asp-controller="Account" asp-action="LogOut">Log Out</a></li>
+                                <li><a asp-area="" asp-controller="Account" asp-action="LogOut">Wyloguj się</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -67,21 +67,26 @@
         {
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Notes</h2>
-                    <ul>
-                        <li>Once you pick a recipient, you will get an e-mail with a reminder, plus the person's wish list.</li>
+                    <h2>Instrukcje</h2>
+                    <ol>
+                        <!-- <li>Once you pick a recipient, you will get an e-mail with a reminder, plus the person's wish list.</li>
                         <li>The dollar limit per person is @AppSettings.GiftDollarLimit.ToString("$0.00")@(".")</li>
                         <li>Log back into this website with your e-mail address at any time to manage your wish list and view your recipient's wish list.</li>
                         <li>Preview images are pulled automagically from the given link address and may not be the correct picture, it's recommended that you click through to the actual linked page.</li>
                         <li>Click "Received Gifts" at the top to view the gifts everyone got and add your own!</li>
-                        <li>The picking system will prevent you from picking the same person two years in a row!</li>
-                    </ul>
+                        <li>The picking system will prevent you from picking the same person two years in a row!</li> -->
+                        <li>Uzupełnij swoją listę podpowiedzi, aby zwiększyć swoje szanse otrzymania wymarzonego upominku.</li>
+                        <li>Wybierz osobę do obdarowania (jest możliwość zmiany wyboru). Osoba obdarowywana nie jest informowana w żaden sposób o tym, kto ją wybrał.</li>
+                        <li>Przygotuj upominek, sugerując się podpowiedziami obdarowywanej osoby. W przypadku braku lub niewystarczających podpowiedzi, można wysłać email-przypominajkę z prośbą o uzupełnienie listy.</li>
+                        <li>???</li>
+                        <li>Wręczanie prezentów podczas Świąt @DateHelper.Year</li>
+                    </ol>
                 </div>
             </div>
         }
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - <a href="http://github.com/bradwestness/SecretSanta">Secret Santa</a></p>
+            <p>&copy; @DateTime.Now.Year - <a href="http://github.com/falkenhawk/SecretSanta">Secret Santa</a></p>
         </footer>
     </div>
 
@@ -95,15 +100,15 @@
 
             //
             // Add bootstrap styling to fancy HTML5 inputs
-            $("input[type='url'], input[type='email']").addClass("form-control");
+            $("input[type='url'], input[type='email'], input[type='text']").addClass("form-control");
 
             //
             // Hide dismissable alerts after 10 seconds
-            setTimeout(function () {
-                $(".alert-dismissable").slideUp("normal", function () {
-                    $(this).remove();
-                });
-            }, 10000);
+            // setTimeout(function () {
+            //    $(".alert-dismissable").slideUp("normal", function () {
+            //        $(this).remove();
+            //    });
+            // }, 10000);
 
         })(window.jQuery);
     </script>

@@ -17,8 +17,10 @@ namespace SecretSanta.Models
         public Guid? Id { get; set; }
 
         [Required]
+        [DisplayName("Podpowiedź")]
         public string Name { get; set; }
 
+        [DisplayName("Dodatkowy opis, szczegóły (opcjonalnie)")]
         public string Description { get; set; }
 
         [DisplayName("Link"), DataType(DataType.Url)]
@@ -99,26 +101,59 @@ namespace SecretSanta.Models
         public static void SendReminder(Guid id, IUrlHelper urlHelper)
         {
             var account = DataRepository.Get<Account>(id);
-            string url = urlHelper.Action("LogIn", "Account", new { id = account.Id }, "http");
+
+            var token = GuidEncoder.Encode(account.Id.Value);
+            var url = urlHelper.Action("LogIn", "Account", new { token }, "http");
+
             string body = new StringBuilder()
-                .AppendFormat("Hey {0}, ", account.DisplayName).AppendLine()
+                .AppendFormat("Hej {0}, ", account.DisplayName).AppendLine()
                 .AppendLine()
-                .AppendFormat("Santa here. A little birdie told me you haven't added any items to your ")
-                .AppendFormat("wish list yet. Maybe you should increase your chances ")
-                .AppendFormat("of getting something you actually want by ")
-                .AppendFormat("visiting the address below! ").AppendLine()
+                .AppendFormat("Z tej strony Secret Santa. Pewien ktoś prosi, abyś uzupełnił(a) swoją listę podpowiedzi dla wymarzonego prezentu.").AppendLine()
+                .AppendFormat("Bardzo to pomoże tej osobie dokonać wyboru! Jeśli już uzupełniłaś(eś) swoją listę wcześniej, być może potrzebne są dokładniejsze wskazówki.").AppendLine()
                 .AppendLine()
-                .AppendFormat("<a href=\"{0}\">Secret Santa Website</a> ", url).AppendLine()
+                .AppendFormat("Aby to zrobić, wejdź na moją stronę:").AppendLine()
+                .AppendLine()
+                .AppendLine($"<a href=\"{url}\">Secret Santa - Wejście ({account.DisplayName})</a>").AppendLine()
                 .AppendLine()
                 .AppendFormat("Ho ho ho, ").AppendLine()
                 .AppendLine()
-                .AppendFormat("Santa ").AppendLine()
+                .AppendFormat("Secret Santa").AppendLine()
                 .ToString();
 
-            var from = new MailboxAddress("Santa Claus", "santa@thenorthpole.com");
             var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
 
-            EmailMessage.Send(from, to, "Secret Santa Reminder", body);
+            EmailMessage.Send(to, "Secret Santa - Prośba o podpowiedzi", body);
+        }
+
+        public static void SendUpdate(Account acc, IUrlHelper urlHelper)
+        {
+            if (!acc.HasBeenPicked())
+            {
+                return;
+            }
+
+            var account = acc.GetPickedBy();
+
+            var token = GuidEncoder.Encode(account.Id.Value);
+            var url = urlHelper.Action("LogIn", "Account", new { token }, "http");
+
+            string body = new StringBuilder()
+                .AppendFormat("Hej {0}, ", account.DisplayName).AppendLine()
+                .AppendLine()
+                .AppendFormat("Z tej strony Secret Santa. Chcę tylko poinformować, że osoba, którą zamierzasz obdarować wprowadziła zmiany na swojej liście podpowiedzi dla wymarzonego prezentu.").AppendLine()
+                .AppendLine()
+                .AppendFormat("Wejdź na moją stronę, aby dowiedzieć się, co nowego się pojawiło:").AppendLine()
+                .AppendLine()
+                .AppendLine($"<a href=\"{url}\">Secret Santa - Wejście ({account.DisplayName})</a>").AppendLine()
+                .AppendLine()
+                .AppendFormat("Ho ho ho, ").AppendLine()
+                .AppendLine()
+                .AppendFormat("Secret Santa").AppendLine()
+                .ToString();
+
+            var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
+
+            EmailMessage.Send(to, $"Secret Santa - Podpowiedź od: {acc.DisplayName}", body);
         }
 
         #endregion

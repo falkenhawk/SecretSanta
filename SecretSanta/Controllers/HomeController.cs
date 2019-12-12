@@ -26,12 +26,12 @@ namespace SecretSanta.Controllers
             return View(model);
         }
 
-        [Authorize]
-        public IActionResult Pick()
-        {
-            Account model = User.GetAccount();
-            model.Pick();
-            return View(model);
-        }
+        // [Authorize]
+        // public IActionResult Pick()
+        // {
+        //     Account model = User.GetAccount();
+        //     model.Pick();
+        //     return View(model);
+        // }
     }
 }

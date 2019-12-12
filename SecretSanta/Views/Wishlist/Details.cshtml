@@ -1,6 +1,6 @@
 ﻿@model WishlistEditModel
 @{
-    ViewBag.Title = Model.DisplayName + "'s Wish List";
+    ViewBag.Title = Model.DisplayName + " - wymarzony upominek";
 }
 
 <h1>@ViewBag.Title</h1>
@@ -10,9 +10,9 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Item</th>
-                <th>Preview</th>
-                <th>&nbsp;</th>
+                <th>Lista podpowiedzi</th>
+                <!-- <th>Preview</th>
+                <th>&nbsp;</th> -->
             </tr>
         </thead>
         <tbody>
@@ -23,7 +23,7 @@
                         <h3>@Html.DisplayFor(m => item.Name)</h3>
                         <p><small>@Html.DisplayFor(m => item.Description)</small></p>
                     </td>
-                    <td>
+                    <!-- <td>
                         @if (!string.IsNullOrWhiteSpace(item.Url))
                         {
                             <a class="preview" target="_blank" href="@item.Url"><img class="img-thumbnail img-responsive" src="@Url.Action("FeaturedImage", "Preview", new {accountId = Model.AccountId, itemId = item.Id})" /></a>
@@ -41,16 +41,23 @@
                                 <a class="btn btn-link" href="#">No Link Provided</a>
                             }
                         </div>
-                    </td>
+                    </td> -->
                 </tr>
             }
         </tbody>
     </table>
+    <p>
+        <a href="@Url.Action("Remind", "Wishlist", new {id = Model.AccountId})" class="btn btn-primary btn-lg">Wyślij (anonimowo) email z prośbą o więcej podpowiedzi &raquo;</a>
+    </p>
 }
 else
 {
-    <p>Looks like @Model.DisplayName has not added any items yet.</p>
+    <p>@Model.DisplayName nie dodał(a) jeszcze podpowiedzi do swojego wymarzonego upominku.</p>
     <p>
-        <a href="@Url.Action("Remind", "Wishlist", new {id = Model.AccountId})" class="btn btn-primary btn-lg">Send a Reminder &raquo;</a>
+        <a href="@Url.Action("Remind", "Wishlist", new {id = Model.AccountId})" class="btn btn-primary btn-lg">Wyślij email-przypominajkę &raquo;</a>
     </p>
 }
+
+<p>
+    <a class="btn btn-default btn-lg" href="@Url.Action("Index", "Wishlist")">Twój wymarzony upominek - dodaj podpowiedzi &raquo;</a>
+</p>

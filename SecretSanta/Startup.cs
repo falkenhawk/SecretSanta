@@ -68,6 +68,19 @@ namespace SecretSanta
             app.UseAuthentication();
             app.UseSession();
             app.UseMvcWithDefaultRoute();
+
+            Console.WriteLine("Settings:");
+            Console.WriteLine($"AppSettings.AdminEmail: {AppSettings.AdminEmail}");
+            Console.WriteLine($"AppSettings.MaxImagesToLoad: {AppSettings.MaxImagesToLoad}");
+            Console.WriteLine($"AppSettings.DefaultPreviewImage: {AppSettings.DefaultPreviewImage}");
+            Console.WriteLine($"AppSettings.DataDirectory: {AppSettings.DataDirectory}");
+            Console.WriteLine($"AppSettings.AccountFilePattern: {AppSettings.AccountFilePattern}");
+            Console.WriteLine($"AppSettings.GiftDollarLimit: {AppSettings.GiftDollarLimit}");
+            Console.WriteLine($"AppSettings.SmtpHost: {AppSettings.SmtpHost}");
+            Console.WriteLine($"AppSettings.SmtpPort: {AppSettings.SmtpPort}");
+            Console.WriteLine($"AppSettings.SmtpUser: {AppSettings.SmtpUser}");
+            Console.WriteLine($"AppSettings.SmtpPass: {AppSettings.SmtpPass}");
+            Console.WriteLine($"AppSettings.SmtpFrom: {AppSettings.SmtpFrom}");
         }
     }
 }

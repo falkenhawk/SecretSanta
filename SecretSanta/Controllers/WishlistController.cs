@@ -33,7 +33,9 @@ namespace SecretSanta.Controllers
             if (ModelState.IsValid)
             {
                 WishlistManager.AddItem(User.GetAccount(), model);
-                this.SetResultMessage($"<strong>Successfully added</strong> {model.Name}.");
+                this.SetResultMessage($"<strong>Podpowiedź dodana:</strong> {model.Name}.");
+
+                WishlistManager.SendUpdate(User.GetAccount(), Url);
             }
 
             return RedirectToAction("Index");
@@ -47,7 +49,9 @@ namespace SecretSanta.Controllers
             if (ModelState.IsValid)
             {
                 WishlistManager.EditItem(User.GetAccount(), model);
-                this.SetResultMessage($"<strong>Successfully updated</strong> {model.Name}.");
+                this.SetResultMessage($"<strong>Podpowiedź zmieniona:</strong> {model.Name}.");
+
+                WishlistManager.SendUpdate(User.GetAccount(), Url);
             }
 
             return RedirectToAction("Index");
@@ -61,7 +65,9 @@ namespace SecretSanta.Controllers
             if (ModelState.IsValid)
             {
                 WishlistManager.DeleteItem(User.GetAccount(), model);
-                this.SetResultMessage($"<strong>Successfully deleted</strong> {model.Name}.");
+                this.SetResultMessage($"<strong>Podpowiedź usunięta:</strong> {model.Name}.");
+
+                WishlistManager.SendUpdate(User.GetAccount(), Url);
             }
 
             return RedirectToAction("Index");
@@ -72,8 +78,15 @@ namespace SecretSanta.Controllers
         public IActionResult Remind(Guid id)
         {
             WishlistManager.SendReminder(id, Url);
-            this.SetResultMessage("<strong>Reminder sent</strong> successfully.");
-            return RedirectToAction("Details", new { id });
+            this.SetResultMessage("<strong>Przypominajka została wysłana</strong>");
+            // return RedirectToAction("Details", new { id });
+
+            Account model = User.GetAccount();
+            if (!model.HasPicked())
+            {
+                return RedirectToAction("Index", "Pick");
+            }
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -36,7 +36,7 @@ namespace SecretSanta.Controllers
             if (ModelState.IsValid)
             {
                 model.Send(Url);
-                this.SetResultMessage($"A log in link will be sent to {model.Email}.");
+                this.SetResultMessage($"Wiadomość została wysłana na adres <strong>{model.Email}</strong>.");
             }
 
             return RedirectToAction("Index", "Home");

@@ -26,7 +26,7 @@
             <th>Name</th>
             <th>E-Mail</th>
             <th>Has Picked</th>
-            <th>Has Been Picked</th>
+            <!-- <th>Has Been Picked</th> -->
             <th>&nbsp;</th>
         </tr>
     </thead>
@@ -37,7 +37,7 @@
                 <td>@Html.DisplayFor(m => m.Users[i].DisplayName)</td>
                 <td>@Html.DisplayFor(m => m.Users[i].Email)</td>
                 <td>@Html.CheckBox("Users[" + i + "].HasPicked", Model.Users[i].Picked.HasValue, new { disabled = "disabled" })</td>
-                <td>@Html.CheckBox("Users[" + i + "].HasBeenPicked", !string.IsNullOrWhiteSpace(Model.Users[i].PickedBy), new { disabled = "disabled" })</td>
+                <!-- <td>@Html.CheckBox("Users[" + i + "].HasBeenPicked", !string.IsNullOrWhiteSpace(Model.Users[i].PickedBy), new { disabled = "disabled" })</td> -->
                 <td>
                     <div class="pull-right">
                         <a class="btn btn-link" href="@Url.Action("Details", "Wishlist", new {id = Model.Users[i].AccountId})">View Wishlist &raquo;</a>

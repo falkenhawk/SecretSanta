@@ -156,7 +156,7 @@ namespace SecretSanta.Models
 
             if (account != null)
             {
-                var principal = new ClaimsPrincipal(new Identity(account.Email));
+                var principal = new ClaimsPrincipal(new Identity(account.Id.ToString()));
                 httpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                 returnUrl = string.IsNullOrWhiteSpace(returnUrl)
@@ -208,7 +208,10 @@ namespace SecretSanta.Models
     {
         #region Variables
 
-        [Required, EmailAddress, DisplayName("E-Mail Address")]
+        [Required, DisplayName("Imię")]
+        public string DisplayName { get; set; }
+
+        [Required, EmailAddress, DisplayName("Adres E-Mail")]
         public string Email { get; set; }
 
         #endregion
@@ -217,15 +220,17 @@ namespace SecretSanta.Models
 
         public void Send(IUrlHelper urlHelper)
         {
-            var account = DataRepository.GetAll<Account>().FirstOrDefault(x => x.Email.Equals(Email, StringComparison.CurrentCultureIgnoreCase));
+            var account = DataRepository.GetAll<Account>().FirstOrDefault(
+                x => x.DisplayName.Equals(DisplayName, StringComparison.CurrentCultureIgnoreCase) && x.Email.Equals(Email, StringComparison.CurrentCultureIgnoreCase)
+            );
 
-            if (account == null && Email.Equals(AppSettings.AdminEmail))
+            if (account == null/* && Email.Equals(AppSettings.AdminEmail)*/)
             {
                 account = new Account
                 {
-                    Email = AppSettings.AdminEmail,
+                    Email = Email,
                     Id = Guid.NewGuid(),
-                    DisplayName = "Admin"
+                    DisplayName = DisplayName
                 };
                 DataRepository.Save(account);
             }
@@ -236,25 +241,25 @@ namespace SecretSanta.Models
                 var url = urlHelper.Action("LogIn", "Account", new { token }, "http");
 
                 StringBuilder body = new StringBuilder()
-                    .AppendLine($"Hey {account.DisplayName}!")
+                    .AppendLine($"Hej {account.DisplayName}!")
                     .AppendLine()
-                    .Append("Santa here. Just sending you the log-in link ")
-                    .AppendLine("you requested for the Secret Santa website. ")
+                    .Append("Z tej strony Secret Santa. Przesyłam link, dzięki któremu możesz zalogować się na moją stronę.").AppendLine()
                     .AppendLine()
-                    .Append("Please click the link below to access the website ")
-                    .AppendLine("and manage your wish list.")
+                    .Append("Po prostu w niego kliknij: ")
                     .AppendLine()
-                    .AppendLine($"<a href=\"{url}\">Secret Santa</a>")
+                    .AppendLine($"<a href=\"{url}\">Secret Santa - Wejście ({account.DisplayName})</a>").AppendLine()
                     .AppendLine()
-                    .AppendLine("Ho ho ho, ")
+                    .AppendLine("Na mojej stronie będziesz mógł/mogła wybrać osobę, którą zechcesz obdarować.")
+                    .AppendLine("Możesz również dodać podpowiedzi do swojego wymarzonego upominku. Może to bardzo pomóc osobie, która wybierze Ciebie do obdarowania!")
+                    .AppendLine()
+                    .AppendLine("Udanej zabawy! Ho ho ho, ")
                     .AppendLine()
                     .AppendLine("Santa")
                     .AppendLine();
 
-                var from = new MailboxAddress("Santa Claus", "santa@thenorthpole.com");
                 var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
 
-                EmailMessage.Send(from, to, "Secret Santa Log-In Link", body.ToString());
+                EmailMessage.Send(to, "Secret Santa - link do logowania", body.ToString());
             }
         }
 
@@ -299,25 +304,25 @@ namespace SecretSanta.Models
                 string url = urlHelper.Action("LogIn", "Account", new { token }, "http");
 
                 StringBuilder body = new StringBuilder()
-                    .AppendLine($"Hey {account.DisplayName}!")
+                    .AppendLine($"Hej {account.DisplayName}!")
                     .AppendLine()
-                    .Append("Santa here. Just wanted to let you know that the ")
-                    .AppendLine("Secret Santa website is ready!")
+                    .Append("Z tej strony Secret Santa. Przesyłam link, dzięki któremu możesz zalogować się na moją stronę.")
                     .AppendLine()
-                    .Append("Please visit the address below to pick your recipient and ")
-                    .AppendLine("create your wish list.")
+                    .Append("Po prostu w niego kliknij: ")
                     .AppendLine()
-                    .AppendLine($"<a href=\"{url}\">Secret Santa Website</a>")
+                    .AppendLine($"<a href=\"{url}\">Secret Santa - Wejście ({account.DisplayName})</a>").AppendLine()
                     .AppendLine()
-                    .AppendLine("Ho ho ho, ")
+                    .AppendLine("Na mojej stronie będziesz mógł/mogła wybrać osobę, którą zechcesz obdarować.")
+                    .AppendLine("Możesz również dodać podpowiedzi do swojego wymarzonego upominku. Może to bardzo pomóc osobie, która wybierze Ciebie do obdarowania!")
+                    .AppendLine()
+                    .AppendLine("Udanej zabawy! Ho ho ho, ")
                     .AppendLine()
                     .AppendLine("Santa")
                     .AppendLine();
 
-                var from = new MailboxAddress("Santa Claus", "santa@thenorthpole.com");
                 var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
 
-                EmailMessage.Send(from, to, "Secret Santa Reminder", body.ToString());
+                EmailMessage.Send(to, "Secret Santa - link do logowania", body.ToString());
             }
         }
 
@@ -363,10 +368,9 @@ namespace SecretSanta.Models
                     .AppendLine()
                     .AppendLine("Santa");
 
-                var from = new MailboxAddress("Santa Claus", "santa@thenorthpole.com");
                 var to = new List<MailboxAddress> { new MailboxAddress(account.DisplayName, account.Email) };
 
-                EmailMessage.Send(from, to, "Secret Santa Reminder", body.ToString());
+                EmailMessage.Send(to, "Secret Santa Reminder", body.ToString());
             }
         }
 
@@ -517,6 +521,61 @@ namespace SecretSanta.Models
                     Selected = DoNotPick.Any(b => b.Equals(a.Id))
                 });
         }
+
+        #endregion
+    }
+
+    public class PickModel
+    {
+        #region Variables
+
+        public Account Account { get; set; }
+
+        public IList<Account> Candidates { get; set; }
+
+        #endregion
+
+        #region Public Methods
+
+        public PickModel(Guid id)
+        {
+            Candidates = new List<Account>();
+
+            if (id.Equals(Guid.Empty))
+            {
+                return;
+            }
+
+            var accounts = DataRepository.GetAll<Account>();
+            Account = accounts.Single(x => x.Id.Equals(id));
+
+            var candidates = DataRepository.GetAll<Account>()
+                .Where(a =>
+                    a.Id != Account.Id
+                    && a.HasBeenPicked() == false
+                    && !Account.DoNotPick.Contains(a.Id.Value)
+                    && !a.DoNotPick.Contains(Account.Id.Value)
+                );
+            foreach (var user in candidates)
+            {
+                Candidates.Add(user);
+            }
+        }
+
+        public void Pick(Guid id)
+        {
+            var accounts = DataRepository.GetAll<Account>();
+            var candidateAccount = accounts.Single(x => x.Id.Equals(id));
+            if (candidateAccount.HasBeenPicked())
+            {
+                // already picked
+                return;
+            }
+
+            Account.Picked[DateHelper.Year] = candidateAccount.Id;
+            DataRepository.Save(Account);
+        }
+
 
         #endregion
     }
