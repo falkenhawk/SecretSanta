@@ -5,7 +5,7 @@ SecretSanta
 
 SecretSanta is an easy to use gift exchange organizer that you can deploy to your own webserver, or even to a free Windows Azure webiste.
 
-![Screenshot](https://raw.github.com/bradwestness/SecretSanta/master/screenshot.png)
+![Screenshot](https://raw.github.com/falkenhawk/SecretSanta/master/screenshot.png)
 
 ## Features
 
@@ -38,3 +38,10 @@ SecretSanta is an easy to use gift exchange organizer that you can deploy to you
 ```
 3. Deploy to any server capable of running ASP.NET Core 1 or later
 4. Make sure the folder specified in the `DataDirectory` appSetting is writable
+
+
+5. Steps to build and save the docker image:
+```
+docker build -t secretsanta .
+docker save -o <absolutepathtofile.tar> secretsanta
+```
